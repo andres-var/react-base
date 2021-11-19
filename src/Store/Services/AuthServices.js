@@ -1,5 +1,5 @@
 import { fetchClient } from "Helpers";
-import AuthActions from "Store/Actions/AuthActions";
+import AuthActions     from "Store/Actions/AuthActions";
 // import AuthActions from "Store/Actions/AuthActions";
 
 const login = (values) => async (dispatch) => {

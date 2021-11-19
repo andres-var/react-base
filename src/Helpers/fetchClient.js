@@ -23,7 +23,7 @@ const fetchClient = (url, options) => new Promise( async (resolve, reject) => {
 			} : {} ),
 		});
 
-		if(response.status === 401){
+		if (response.status === 401) {
 			Store.dispatch(AuthActions.clearUserData());
 			reject();
 		}

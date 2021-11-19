@@ -4,32 +4,35 @@ module.exports = {
 		"plugin:react/recommended",
 	],
 	env : {
-		browser : true,
-		node    : true,
 		es6     : true,
-		jest    : true,
+		node    : true,
+		browser : true,
 	},
 	parserOptions : {
 		ecmaVersion  : 9,
+		sourceType   : "module",
 		ecmaFeatures : {
-			jsx : true,
+			jsx     : true,
+			modules : true,
+
+			experimentalObjectRestSpread : true,
 		},
-		requireConfigFile : false,
 	},
+	parser  : "babel-eslint",
 	plugins : [
 		"react",
 		"import",
 		"react-hooks",
 		"align-import",
+		"unused-imports",
 	],
-	parser : "babel-eslint",
-	rules  : {
+	rules : {
 		indent : [
 			"error",
 			"tab",
 			{
 				SwitchCase   : 1,
-				// Delete next line when problem is fixed
+				// Comment next line when problem is fixed
 				ignoredNodes : ["TemplateLiteral"],
 			},
 		],
@@ -51,9 +54,15 @@ module.exports = {
 				args : "none",
 			},
 		],
-		"react/display-name" : "off",
-		"react/prop-types"   : "off",
-		"comma-dangle"       : [
+		"space-before-function-paren" : [
+			"error",
+			{
+				anonymous  : "never",
+				named      : "never",
+				asyncArrow : "always",
+			},
+		],
+		"comma-dangle" : [
 			"error",
 			{
 				arrays    : "always-multiline",
@@ -82,45 +91,50 @@ module.exports = {
 			"error",
 			"always",
 		],
-		"arrow-parens"    : "off",
-		"linebreak-style" : [
-			"off",
-			"windows",
-		],
-		"no-multi-spaces" : [
-			"error",
-			{
-				exceptions : {
-					"ImportDeclaration"  : true,
-					"VariableDeclarator" : true,
-				},
-			},
-		],
-		"comma-spacing" : [
+		"keyword-spacing"     : "error",
+		"space-before-blocks" : "error",
+		"comma-spacing"       : [
 			"error",
 			{
 				before : false,
 				after  : true,
 			},
 		],
-		"no-var"                   : "error",
-		"prefer-const"             : "error",
-		"no-const-assign"          : "error",
-		"prefer-template"          : "error",
-		"react/react-in-jsx-scope" : "off",
-		"import/extensions"        : [
+		eqeqeq                             : "error",
+		"no-var"                           : "error",
+		"prefer-const"                     : "error",
+		"no-const-assign"                  : "error",
+		"no-invalid-this"                  : "error",
+		"no-debugger"                      : process.env.NODE_ENV === "production" ? "error" : "off",
+		"react/display-name"               : "off",
+		"no-inner-declarations"            : "off",
+		"react/prop-types"                 : "off",
+		"react/react-in-jsx-scope"         : "off",
+		"align-import/align-import"        : "error",
+		"align-import/trim-import"         : "error",
+		"unused-imports/no-unused-imports" : "error",
+		"no-case-declarations"             : "off",
+		"react/no-unescaped-entities"      : "off",
+		"no-multiple-empty-lines"          : ["error", { max : 2, maxEOF : 1 }],
+		"no-duplicate-imports"             : "error",
+		"no-loop-func"                     : "error",
+		"import/extensions"                : [
 			"error",
 			{
-				ts   : "never",
-				tsx  : "never",
-				jsx  : "always",
 				js   : "never",
+				jsx  : "always",
+				scss : "always",
+				json : "always",
 				png  : "always",
 				jpg  : "always",
 				svg  : "always",
 				css  : "always",
-				json : "always",
-				scss : "always",
+			},
+		],
+		"import/no-extraneous-dependencies" : [
+			"error",
+			{
+				devDependencies : true,
 			},
 		],
 		"react/jsx-indent" : [
@@ -131,8 +145,22 @@ module.exports = {
 			1,
 			"tab",
 		],
-		"react/no-find-dom-node"      : "off",
-		"react/no-unescaped-entities" : "off",
+		"react/jsx-curly-newline" : [
+			"error",
+			{
+				multiline  : "consistent",
+				singleline : "consistent",
+			},
+		],
+		"react/jsx-tag-spacing" : [
+			"error",
+			{
+				closingSlash      : "never",
+				beforeSelfClosing : "always",
+				afterOpening      : "never",
+				beforeClosing     : "never",
+			},
+		],
 	},
 	settings : {
 		react : {

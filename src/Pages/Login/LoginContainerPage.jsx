@@ -1,12 +1,12 @@
-import React  from "react";
+import React         from "react";
 import { useFormik } from "formik";
-import * as Yup from "yup";
-import { connect } from "react-redux";
+import * as Yup      from "yup";
+import { connect }   from "react-redux";
 
 // our my components
 import AuthService from "Store/Services/AuthServices";
 import { bindAll } from "Helpers";
-import LoginPage from "./LoginPage";
+import LoginPage   from "./LoginPage";
 
 const loginSchema = Yup.object().shape({
 	email    : Yup.string().email("Invalid email").required("Required"),

@@ -1,8 +1,8 @@
 import { createStore, applyMiddleware } from "redux";
 import { persistStore, persistReducer } from "redux-persist";
-import { composeWithDevTools } from "redux-devtools-extension";
-import thunk from "redux-thunk";
-import localForage from "localforage";
+import { composeWithDevTools }          from "redux-devtools-extension";
+import thunk                            from "redux-thunk";
+import localForage                      from "localforage";
 
 // Import Own Components
 import rootReducer from "./Reducers";
