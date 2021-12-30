@@ -1,15 +1,14 @@
-import React     from "react";
-import useStyles from "./styles";
+import ToastifComponent from "Components/ToastifyComponent/ToastifComponent";
+import React            from "react";
 
 const LoginPage = ({
 	delegations: {
 		formik,
 	},
 }) => {
-	const clasess = useStyles();
 
 	return (
-		<div className={clasess.root}>
+		<div>
 			<form onSubmit={formik.handleSubmit}>
 				<div className="campo">
 					<input name="email" type="text" onChange={formik.handleChange} value={formik.values.email} />
@@ -20,6 +19,7 @@ const LoginPage = ({
 				<div className="campo">
 					<button type="submit">Enviar</button>
 				</div>
+				<ToastifComponent />
 			</form>
 		</div>
 	);

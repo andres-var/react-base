@@ -1,11 +1,11 @@
 import React    from "react";
 import HomePage from "./HomePage";
 
-const HomeContainerPage = () => {
+const HomePageContainer = () => {
 	console.log("Componente logico");
 	return (
 		<HomePage />
 	);
 };
 
-export default HomeContainerPage;
+export default HomePageContainer;

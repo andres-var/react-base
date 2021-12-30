@@ -13,7 +13,7 @@ const loginSchema = Yup.object().shape({
 	password : Yup.string().required(),
 });
 
-const LoginContainerPage = ({
+const LoginPageContainer = ({
 	authService,
 }) => {
 	const formik = useFormik({
@@ -37,4 +37,4 @@ const LoginContainerPage = ({
 
 const mapDispatchToProps = bindAll({ AuthService });
 
-export default connect(null, mapDispatchToProps)(LoginContainerPage);
+export default connect(null, mapDispatchToProps)(LoginPageContainer);
