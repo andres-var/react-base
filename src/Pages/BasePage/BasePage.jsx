@@ -1,11 +1,9 @@
-import React     from "react";
-import useStyles from "./styles";
+import React from "react";
 
 const BasePage = () => {
-	const clasess = useStyles();
 
 	return (
-		<h4 className={clasess.root}>Componente base</h4>
+		<h4>Componente base</h4>
 	);
 };
 
