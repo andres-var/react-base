@@ -1,35 +1,64 @@
-import qs from "qs";
+import { useEffect, useState } from "react";
 
 // Import Own Components
 import {
+	instanceAxios,
 	fetchClient,
 	isValidArray,
 } from "Helpers";
 import GenericActions from "../Actions/GenericActions";
 
+
 // import ClientsActions from "../Actions/ClientsActions";
 
-const getAll = (type, query) => async (dispatch, getState) => {
-	try {
-		const { _authReducer : { token } } = getState();
+export const getAll = (type, query) => (dispatch, getState) => {
+	const [data, setData]       = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError]     = useState(false);
+	const source = instanceAxios.CancelToken.source();
 
-		const response = await fetchClient(`/${type}?${qs.stringify(query)}`, { token } );
+	const fetchData = async () => {
 
-		const {
-			docs,
-			page,
-			totalPages,
-		} = await response.json();
+		try {
+			// const { _authReducer : { token } } = getState();
 
-		if (isValidArray(docs)) {
-			dispatch(GenericActions.getAll(docs, page, totalPages, type));
-		} else {
-			dispatch(GenericActions.getAll([], 0, 0, type));
+			const response = await instanceAxios({
+				method      : "GET",
+				url         : type,
+				params      : query,
+				cancelToken : source.token,
+			});
+
+			const docs = response.data.data;
+			const page = response.data.page;
+			const total = response.data.total;
+
+
+			if (isValidArray(docs)) {
+				setData(docs);
+				dispatch(GenericActions.getAll(docs, page, total, type));
+			} else {
+				setData([]);
+				dispatch(GenericActions.getAll([], 0, 0, type));
+			}
+
+			setLoading(false);
+			setError(false);
+
+		} catch (err) {
+			setLoading(false);
+			setError(true);
+			console.error("error", err);
 		}
-		return response;
-	} catch (err) {
-		console.error("error", err);
-	}
+	};
+
+	useEffect(() => {
+		fetchData();
+
+		return () => source.cancel("Operation canceled by the user.");
+	}, [type]);
+
+	return { data, loading, error };
 };
 
 const get = (_id, type) => async (dispatch, getState) => {

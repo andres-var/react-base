@@ -1,15 +1,12 @@
-import React     from "react";
-import useStyles from "./styles";
+import React from "react";
 
 const AuthLayout = ({
 	delegations: {
 		children,
 	},
 }) => {
-	const clasess = useStyles();
-
 	return (
-		<div className={clasess.root}>
+		<div>
 			<div className="authLayout">
 				{children}
 			</div>

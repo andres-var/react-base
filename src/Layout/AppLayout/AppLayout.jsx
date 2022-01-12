@@ -1,12 +1,10 @@
-import React     from "react";
-import useStyles from "./styles";
+import React from "react";
 
 const AppLayout = ({ children }) => {
-	const clasess = useStyles();
 
 	return (
 		<div>
-			<h4 className={clasess.root}>AppLayout</h4>
+			<h4>AppLayout</h4>
 			{children}
 		</div>
 	);

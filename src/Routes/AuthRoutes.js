@@ -4,6 +4,8 @@ import {
 
 const AuthLayout = lazy(() => import( /* webpackChunkName: "UsersPage" */ "Layout/AuthLayout"));
 const LoginPage = lazy(() => import( /* webpackChunkName: "LogoinPage" */ "Pages/LoginPage"));
+const RegisterPage = lazy(() => import( /* webpackChunkName: "LogoinPage" */ "Pages/RegisterPage"));
+
 
 export const authRoutes = [
 	{
@@ -16,7 +18,13 @@ export const authRoutes = [
 		to        : "/auth/login",
 		path      : "/auth/login",
 		Component : LoginPage,
-		name      : "Login",
+		name      : "Inicio de sesión",
+	},
+	{
+		to        : "/auth/register",
+		path      : "/auth/register",
+		Component : RegisterPage,
+		name      : "Registro",
 	},
 ];
 
