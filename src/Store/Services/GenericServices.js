@@ -3,46 +3,57 @@ import { useEffect, useState } from "react";
 // Import Own Components
 import {
 	instanceAxios,
-	fetchClient,
 	isValidArray,
 } from "Helpers";
 import GenericActions from "../Actions/GenericActions";
 
 
-// import ClientsActions from "../Actions/ClientsActions";
+export const FetchHook = ({
+	query,
+	module,
+	method = "GET",
+	dataToSend = undefined,
+}) => (dispatch, getState) => {
 
-export const getAll = (type, query) => (dispatch, getState) => {
-	const [data, setData]       = useState([]);
-	const [loading, setLoading] = useState(true);
+	const [data, setData]       = useState(false);
+	const [status, setStatus]       = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [error, setError]     = useState(false);
 	const source = instanceAxios.CancelToken.source();
 
 	const fetchData = async () => {
-
 		try {
-			// const { _authReducer : { token } } = getState();
+			setLoading(true);
+			const { _authReducer : { token } } = getState();
+
+			const body = buildFormData(dataToSend);
 
 			const response = await instanceAxios({
-				method      : "GET",
-				url         : type,
+				method,
+				url         : module,
+				data        : body,
 				params      : query,
 				cancelToken : source.token,
+				headers     : {
+					Authorization : `Bearer ${token}`,
+				},
 			});
 
-			const docs = response.data.data;
-			const page = response.data.page;
-			const total = response.data.total;
-
-
-			if (isValidArray(docs)) {
-				setData(docs);
-				dispatch(GenericActions.getAll(docs, page, total, type));
-			} else {
-				setData([]);
-				dispatch(GenericActions.getAll([], 0, 0, type));
-			}
+			const { data : { data }, status } = response;
 
 			setLoading(false);
+			setStatus(status);
+
+			if (status !== 200 && status !== 201 && status !== 204) {
+				setError(true);
+				return;
+			}
+
+			const actionType = method === "DELETE" ? "remove" : method.toLowerCase();
+
+
+			setData(data);
+			dispatch(GenericActions[actionType](data, module.split("/")[0]));
 			setError(false);
 
 		} catch (err) {
@@ -54,106 +65,40 @@ export const getAll = (type, query) => (dispatch, getState) => {
 
 	useEffect(() => {
 		fetchData();
-
 		return () => source.cancel("Operation canceled by the user.");
-	}, [type]);
+	}, [module]);
 
-	return { data, loading, error };
+	return { data, loading, error, status };
 };
 
-const get = (_id, type) => async (dispatch, getState) => {
-	try {
-		const { _authReducer : { token } } = getState();
 
-		const response = await fetchClient(`/${type}/${_id}`, { token } );
+export default FetchHook;
 
-		const {
-			data,
-		} = await response.json();
 
-		if (!data) {
-			return response;
-		}
+const buildFormData = (data = null) => {
+	const body = new FormData();
 
-		dispatch(GenericActions.get(data, type));
+	if (!data) return body;
 
-		return response;
-	} catch (err) {
-		console.error("error", err);
-		return err;
-	}
-
-};
-
-const remove = (id, type) => async (dispatch, getState) => {
-	try {
-		const { _authReducer : { token } } = getState();
-
-		const response = await fetchClient(`/${type}/${id}`, { token, method : "DELETE" } );
-
-		if (response.status === 200) {
-			dispatch(GenericActions.remove(id, type));
-		}
-
-		return response;
-	} catch (err) {
-		console.error("error", err);
-		return;
-	}
-
-};
-
-const add = (data = {}, type) => async (dispatch, getState) => {
-	try {
-		const { _authReducer : { token } } = getState();
-
-		const body = new FormData();
-
-		for (const item in data) {
+	for (const item in data) {
+		if (isValidArray(data[item])) {
+			data[item].forEach(element => {
+				if (element) {
+					body.append(`${item}[]`, JSON.stringify(element));
+					if (element?.image) body.delete("image");
+				}
+			});
+		} else if (typeof data[item] === "object") {
+			body.append(item, JSON.stringify(data[item]));
+			if (data[item] instanceof File) body.append("file", data[item]);
+			if (data[item] instanceof Date ) {
+				body.delete(item);
+				body.append(item,  data[item]);
+			}
+		} else {
 			body.append(item, data[item]);
 		}
-
-		const response = await fetchClient(`/${type}`, { token, method : "POST", body } );
-
-		if (response.status === 200) {
-			const {data} = await response.json();
-			dispatch(GenericActions.add(data, type));
-		}
-		return response;
-	} catch (err) {
-		console.error("error", err);
-		return err;
 	}
+
+	return body;
 };
-
-const update = (_id, data = {}, type) => async (dispatch, getState) => {
-	try {
-		const { _authReducer : { token } } = getState();
-
-		const body = new FormData();
-
-		for (const item in data) {
-			body.append(item, data[item]);
-		}
-
-		const response = await fetchClient(`/${type}/${_id}`, { token, method : "PUT", body } );
-		if (response.status === 200) {
-			const {data} = await response.json();
-			dispatch(GenericActions.update(data, _id, type));
-		}
-		return response;
-	} catch (err) {
-		console.error("error", err);
-		return err;
-	}
-};
-
-const GenericService = {
-	add,
-	get,
-	getAll,
-	update,
-	remove,
-};
-
-export default GenericService;

@@ -1,53 +1,60 @@
-const getAll = (data = [], page = 1, totalPages = 1, type) => ({
-	type    : `GET_ALL_${type.toUpperCase()}`,
+import { isValidArray } from "Helpers";
+
+
+const get = (data, module) => {
+
+	if (isValidArray(data)) {
+		return {
+			type    : `GET_ALL_${module.toUpperCase()}`,
+			payload : {
+				data       : data?.docs,
+				page       : data?.page,
+				totalPages : data?.total,
+			},
+		};
+	}
+
+	return {
+		type    : `GET_${module.toUpperCase()}`,
+		payload : {
+			data,
+		},
+	};
+};
+
+const put = (data = {}, module) => ({
+	type    : `UPDATE_${module.toUpperCase()}`,
 	payload : {
 		data,
-		page,
-		totalPages,
+		_id : data?._id,
 	},
 });
 
-const get = (data, type) => ({
-	type    : `GET_${type.toUpperCase()}`,
+const post = (data, module) => ({
+	type    : `ADD_${module.toUpperCase()}`,
 	payload : {
 		data,
 	},
 });
 
-const update = (data = {}, _id, type) => ({
-	type    : `UPDATE_${type.toUpperCase()}`,
+const remove = (data = {}, module) => ({
+	type    : `REMOVE_${module.toUpperCase()}`,
 	payload : {
-		data,
-		_id,
+		data : data?._id,
 	},
 });
 
-const add = (data, type) => ({
-	type    : `ADD_${type.toUpperCase()}`,
-	payload : {
-		data,
-	},
-});
-
-const remove = (_id, type) => ({
-	type    : `REMOVE_${type.toUpperCase()}`,
-	payload : {
-		_id,
-	},
-});
-
-const clear = (_id, type) => ({
-	type : `CLEAR_${type.toUpperCase()}`,
+const clear = (_id, module) => ({
+	type : `CLEAR_${module.toUpperCase()}`,
 });
 
 
 const GenericActions = {
-	add,
 	get,
+	put,
+	post,
 	clear,
-	getAll,
 	remove,
-	update,
 };
 
 export default GenericActions;

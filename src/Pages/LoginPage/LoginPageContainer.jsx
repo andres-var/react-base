@@ -4,10 +4,10 @@ import * as Yup      from "yup";
 import { connect }   from "react-redux";
 
 // our my components
-import AuthService    from "Store/Services/AuthServices";
-import { bindAll }    from "Helpers";
-import LoginPage      from "./LoginPage";
-import GenericService from "Store/Services/GenericServices";
+import AuthService from "Store/Services/AuthServices";
+import { bindAll } from "Helpers";
+import LoginPage   from "./LoginPage";
+import FetchHook   from "Store/Services/GenericServices";
 
 
 const loginSchema = Yup.object().shape({
@@ -16,8 +16,8 @@ const loginSchema = Yup.object().shape({
 });
 
 const LoginPageContainer = ({
+	fetchHook,
 	authService,
-	genericService,
 }) => {
 	const formik = useFormik({
 		initialValues : {
@@ -30,7 +30,18 @@ const LoginPageContainer = ({
 		},
 	});
 
-	const { data, loading, error } = genericService.getAll("users", { delay : 3});
+	const { data, loading, error } = fetchHook({
+		module     : "users",
+		method     : "GET",
+		query      : { delay : 3 },
+		dataToSend : {
+			"name" : "morpheus",
+			"job"  : "leader",
+		},
+	});
+	// genericService.getAll("users", { delay : 3});
+
+	console.log(loading);
 
 	return (
 		<LoginPage delegations={{
@@ -43,6 +54,6 @@ const LoginPageContainer = ({
 	);
 };
 
-const mapDispatchToProps = bindAll({ AuthService, GenericService });
+const mapDispatchToProps = bindAll({ AuthService, FetchHook });
 
 export default connect(null, mapDispatchToProps)(LoginPageContainer);
